@@ -25,7 +25,7 @@ SECRET_KEY = 'd6d@&)ivb5y@p0dkcpo9sg85d)fs%(&o%62=e6p!@2_qu@0tbn'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['blockchain.adglink.com', ]
+ALLOWED_HOSTS = ['localhost', 'blockchain.adglink.com', ]
 
 
 # Application definition
@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'tinymce',
+    'rest_framework',
 
     'apps.golos',
     'apps.reviews',

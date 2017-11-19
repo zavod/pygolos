@@ -1,6 +1,6 @@
 import steem as stm
 from steem.post import Post
-from apps.reviews.models import Asset
+from apps.reviews.models import Asset, Review
 from django.conf import settings
 GOLOS_NODES = ['https://ws.golos.io', ]
 
@@ -94,7 +94,28 @@ class GolosBackend(object):
     def get_local_course(self):
         return self.steem.get_current_median_history_price()
 
+    def fill_post_by_source(self, request):
+        token = request.POST.get('token')
+        if token != settings.BLOCKCHAIN_PRIVATE_KEY:
+            return {'result': 'Wrong credentials'}
 
-# self.steem.get_active_votes('rusteemitblog', 'kuratorskie-voznagrazhdeniya-i-stimulirovanie-golosovaniya-daniel-larimer')
+        source_id = request.POST.get('source_id')
+        slug = request.POST.get('slug')
+        title = request.POST.get('title')
+        text = request.POST.get('text')
+        golos_user = settings.GOLOS_USER
+
+        if not Review.objects.filter(slug=slug).exists():
+            review = Review()
+            review.source_id = source_id
+            review.title = title
+            review.slug = slug
+            review.text = text
+            review.golos_user = golos_user
+            review.save()
+
+            # publish to blockchain
+            # self.publish_post(post=review)
+
 
 
