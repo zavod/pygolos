@@ -26,7 +26,9 @@ class GolosBackend(object):
             self.steem = stm.Steem(nodes=GOLOS_NODES, keys=[settings.PRIVATE_POSTING_KEY, settings.ACTIVE_KEY])
 
     def get_posts(self):
-        pass
+        reviews = Review.objects.filter(publish=True, complete=False)
+        for post in reviews:
+            self.get_post(post)
 
     def publish_post(self, post):
         golos_post = self.steem.post(title=post.title, permlink=post.slug, body=post.text, author=settings.GOLOS_USER,

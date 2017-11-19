@@ -20,6 +20,11 @@ class ReviewList(generics.ListAPIView):
             if token != settings.API_TOKEN:
                 return []
 
+            # get info from blockchain
+            backend = GolosBackend()
+            backend.init()
+            backend.get_posts()
+
             queryset = Review.objects.filter(publish=True)
             return queryset
         except:
