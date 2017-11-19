@@ -4,7 +4,7 @@ from rest_framework import filters
 from apps.reviews.models import Review
 from django.views.decorators.csrf import csrf_exempt
 from apps.golos.backend import GolosBackend
-
+from django.http import JsonResponse
 
 class ReviewList(generics.ListAPIView):
     serializer_class = ReviewSerializer
@@ -30,7 +30,7 @@ def commit_posts(request):
     if request.method == 'POST':
         backend = GolosBackend()
         result = backend.fill_post_by_source(request)
-        return result
+        return JsonResponse(result)
 
 
 
