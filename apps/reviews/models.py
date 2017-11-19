@@ -19,7 +19,7 @@ REVIEW_STATUSES = (
 class Review(models.Model):
     source_id = models.IntegerField('source id', blank=True, null=True)
     golos_user = models.CharField('golos user', max_length=255, blank=True, null=True)
-    title = models.CharField('title', max_length=255)
+    title = models.CharField('title', max_length=1000)
     slug = models.SlugField('slug', blank=True, null=True, max_length=1000)
     text = models.TextField('text')
     votes = models.IntegerField('votes', default=0)

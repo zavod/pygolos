@@ -17,7 +17,7 @@ class ReviewList(generics.ListAPIView):
         slug = self.request.GET.get('slug')
 
         try:
-            if token != settings.API_TOKEN:
+            if token != settings.BLOCKCHAIN_TOKEN:
                 return []
 
             # get info from blockchain
