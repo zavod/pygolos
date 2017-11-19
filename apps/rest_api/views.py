@@ -29,7 +29,9 @@ class ReviewList(generics.ListAPIView):
 def commit_posts(request):
     if request.method == 'POST':
         backend = GolosBackend()
-        backend.fill_post_by_source(request)
+        result = backend.fill_post_by_source(request)
+        return result
+
 
 
 

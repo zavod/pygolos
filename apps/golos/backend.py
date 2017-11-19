@@ -116,6 +116,9 @@ class GolosBackend(object):
 
             # publish to blockchain
             # self.publish_post(post=review)
+            return {'result': 'Success'}
+        return {'result': 'False', 'msg': "Review doesn't exists"}
+
 
 
 
