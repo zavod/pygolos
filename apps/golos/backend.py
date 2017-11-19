@@ -32,7 +32,7 @@ class GolosBackend(object):
 
     def publish_post(self, post):
         golos_post = self.steem.post(title=post.title, permlink=post.slug, body=post.text, author=settings.GOLOS_USER,
-                          tags=['kubish', 'кэшбэк', 'cashbacks', 'покупки',], self_vote=True)
+                          tags=['kubish', 'кэшбэк', 'cashbacks', 'покупки', 'Aliexpress'], self_vote=True)
 
         post.publish = True
         post.save()
