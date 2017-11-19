@@ -59,9 +59,14 @@ class GolosBackend(object):
         amount = total_payout_value.get('amount')
         asset = total_payout_value.get('asset')
         self.set_asset(post, asset)
+
         if amount > 0:
             post.reward = amount
             post.complete = True
+
+        if not post.reward:
+            post.save()
+            return
 
         # calc BTC
         gbg_course = float(self.get_local_course().get('base').split(' ')[0])
