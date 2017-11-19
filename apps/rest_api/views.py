@@ -26,9 +26,9 @@ class ReviewList(generics.ListAPIView):
                 return []
 
             # get info from blockchain
-            backend = GolosBackend()
-            backend.init()
-            backend.get_posts()
+            # backend = GolosBackend()
+            # backend.init()
+            # backend.get_posts()
 
             queryset = Review.objects.filter(publish=True)
             return queryset
