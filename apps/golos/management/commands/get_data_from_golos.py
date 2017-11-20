@@ -8,6 +8,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         golos_backend = GolosBackend()
+        golos_backend.init()
         golos_backend.get_posts()
 
 
