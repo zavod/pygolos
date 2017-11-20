@@ -26,11 +26,14 @@ class ReviewList(generics.ListAPIView):
                 return []
 
             # get info from blockchain
+            print('start get data from blockchain')
             backend = GolosBackend()
             backend.init()
             backend.get_posts()
+            print('finish get data from blockchain')
 
             queryset = Review.objects.filter(publish=True)
+            print('got count %s' % queryset.coun())
             return queryset
         except:
             return []
