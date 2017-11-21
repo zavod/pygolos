@@ -13,7 +13,7 @@ class ReviewAdmin(admin.ModelAdmin):
     formfield_overrides = {
         TextField: {'widget': AdminTinyMCE(attrs={'cols': 80, 'rows': 40}, )},
     }
-    actions = [golos_publish_posts_action, get_post_reward_action]
+    actions = [golos_publish_current_post_action, get_post_reward_action]
 
     def get_out_link(self, obj):
         return u"<a href='%s'>link</a>" % (obj.get_out_link())
