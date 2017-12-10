@@ -30,6 +30,7 @@ class Review(models.Model):
     status = models.CharField('status', max_length=255, choices=REVIEW_STATUSES, blank=True, null=True)
     publish = models.BooleanField('publish', default=False)
     complete = models.BooleanField('complete', default=False)
+    tags = models.CharField('tags', max_length=255, blank=True, null=True)
 
     def __str__(self):
         return self.title
