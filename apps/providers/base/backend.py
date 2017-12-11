@@ -20,7 +20,7 @@ class BaseBlockchain(object):
 
     def publish_post(self, post):
         self.steem.post(title=post.title, permlink=post.slug, body=post.text, author=self.author,
-                                     tags=list(post.tags), self_vote=True) # TODO check tags here
+                                     tags=post.tags, self_vote=True)
         # tags = ['kubish', 'кэшбэк', 'cashbacks', 'покупки', 'Aliexpress']
 
         post.publish = True
