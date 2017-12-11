@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.core.management.base import BaseCommand
-from apps.golos.backend import GolosBackend
+
+from apps.providers.golos import GolosBackend
 
 
 class Command(BaseCommand):
@@ -8,7 +9,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         golos_backend = GolosBackend()
-        golos_backend.publish_post()
+        golos_backend.init()
+        golos_backend.get_posts()
 
 
 

@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'tinymce',
     'rest_framework',
 
-    'apps.golos',
+    'apps.providers.golos',
     'apps.reviews',
 
 ]
@@ -143,5 +143,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 UPLOAD_ROOT = os.path.join(BASE_DIR, 'media')
+
+GOLOS_NODES = ['https://ws.golos.io', ]
+STEEM_NODES = [ ] # TODO fill it
 
 from config.local_settings import *

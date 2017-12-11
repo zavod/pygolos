@@ -1,13 +1,15 @@
-from apps.golos.backend import GolosBackend
+from apps.providers.provider import BaseProvider
 
-def golos_publish_current_post_action(modeladmin, request, queryset):
-    for post in queryset:
-        golos_backend = GolosBackend()
-        golos_backend.init()
-        golos_backend.publish_post(post)
+def blockchain_publish_current_post_action(modeladmin, request, queryset):
+    for review in queryset:
+        provider = BaseProvider().get_review_provider(review)
+        if provider:
+            provider.init()
+            provider.publish_post(review)
 
 def get_post_reward_action(modeladmin, request, queryset):
-    for post in queryset:
-        golos_backend = GolosBackend()
-        golos_backend.init()
-        golos_backend.get_post(post)
+    for review in queryset:
+        provider = BaseProvider().get_review_provider(review)
+        if provider:
+            provider.init()
+            provider.get_post(review)

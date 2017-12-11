@@ -2,32 +2,26 @@ import steem as stm
 from steem.post import Post
 from apps.reviews.models import Asset, Review
 from django.conf import settings
-GOLOS_NODES = ['https://ws.golos.io', ]
-
-### TEST ###
-test_user = 'cyberfounder'
-test_wif = '5JVFFWRLwz6JoP9kguuRFfytToGU6cLgBVTL9t6NB3D3BQLbUBS'
-GOLOS_TEST_NODES = ['46.101.132.158:2004', '6.101.132.158:8096']
-GOLOS_TEST_MODE = False
-test_url = 'http://testnet3.golos.io'
-
-# Big post
-test_blog_user = 'rusteemitblog'
-test_blog_post = 'kuratorskie-voznagrazhdeniya-i-stimulirovanie-golosovaniya-daniel-larimer'
 from bittrex.bittrex import Bittrex
 from exchanges.coinapult import Coinapult
 
-class GolosBackend(object):
+
+class BaseBlockchain(object):
+    """
+    BaseBlockchain backend, allow to work with golos.io and steemit
+    """
+    nodes = None
+    PRIVATE_POSTING_KEY = None
+    ACTIVE_KEY = None
+    author = None
+
     def init(self, **kwargs):
-        if GOLOS_TEST_MODE:
-            pass
-            # self.steem = stm.Steem(nodes=GOLOS_TEST_NODES, keys=[PRIVATE_POSTING_KEY, ACTIVE_KEY])
-        else:
-            self.steem = stm.Steem(nodes=GOLOS_NODES, keys=[settings.PRIVATE_POSTING_KEY, settings.ACTIVE_KEY])
+        self.steem = stm.Steem(nodes=self.nodes, keys=[self.PRIVATE_POSTING_KEY, self.ACTIVE_KEY])
 
     def publish_post(self, post):
-        golos_post = self.steem.post(title=post.title, permlink=post.slug, body=post.text, author=settings.GOLOS_USER,
-                          tags=['kubish', 'кэшбэк', 'cashbacks', 'покупки', 'Aliexpress'], self_vote=True)
+        self.steem.post(title=post.title, permlink=post.slug, body=post.text, author=self.author,
+                                     tags=list(post.tags), self_vote=True) # TODO check tags here
+        # tags = ['kubish', 'кэшбэк', 'cashbacks', 'покупки', 'Aliexpress']
 
         post.publish = True
         post.save()
@@ -39,14 +33,13 @@ class GolosBackend(object):
 
     def get_post(self, post):
         asset_source = None
-        kwargs = {'author': post.golos_user, 'permlink': post.slug}
-        golos_post = Post(post=kwargs, steemd_instance=self.steem)
-        votes = golos_post.get('net_votes') # len(post.get('active_votes'))
+        kwargs = {'author': post.author, 'permlink': post.slug}
+        blockchain_post = Post(post=kwargs, steemd_instance=self.steem)
+        votes = blockchain_post.get('net_votes')  # len(post.get('active_votes'))
         post.votes = votes
 
-
         # pending reward
-        reward_pending_amount = golos_post.get('total_pending_payout_value')
+        reward_pending_amount = blockchain_post.get('total_pending_payout_value')
         amount = reward_pending_amount.get('amount')
         asset = reward_pending_amount.get('asset')
         if amount > 0:
@@ -55,7 +48,7 @@ class GolosBackend(object):
         self.set_asset(post, asset)
 
         # payouts reward
-        total_payout_value = golos_post.get('total_payout_value')
+        total_payout_value = blockchain_post.get('total_payout_value')
         amount = total_payout_value.get('amount')
         asset = total_payout_value.get('asset')
         self.set_asset(post, asset)
@@ -68,9 +61,12 @@ class GolosBackend(object):
             post.save()
             return
 
-        # calc BTC
-        gbg_course = float(self.get_local_course().get('base').split(' ')[0])
-        gbg_golos = post.reward / gbg_course
+        if post.provider == 'golos':
+            # calc BTC
+            gbg_course = float(self.get_local_course().get('base').split(' ')[0])
+            gbg_golos = post.reward / gbg_course
+        else:
+            return # TODO set it for steem
 
         api = Bittrex(settings.BITTREX_KEY, settings.BITTREX_SECRET)
         btc_cost = api.get_ticker('BTC-GOLOS').get('result').get('Ask')
@@ -93,7 +89,7 @@ class GolosBackend(object):
             post.asset = asset
 
     def get_account(self):
-        return self.steem.get_account(settings.GOLOS_USER)
+        return self.steem.get_account(self.author)
 
     def get_balance(self):
         return self.get_account()['sbd_balance']
@@ -109,8 +105,10 @@ class GolosBackend(object):
         source_id = request.POST.get('source_id')
         slug = request.POST.get('slug')
         title = request.POST.get('title')
+        tags = request.POST.get('tags')
         text = request.POST.get('text')
-        golos_user = settings.GOLOS_USER
+        provider = request.POST.get('provider')
+        author = self.author
 
         if not Review.objects.filter(slug=slug).exists():
             review = Review()
@@ -118,7 +116,9 @@ class GolosBackend(object):
             review.title = title
             review.slug = slug
             review.text = text
-            review.golos_user = golos_user
+            review.tags = tags
+            review.author = author
+            review.provider = provider
             review.save()
 
             # publish to blockchain

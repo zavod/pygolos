@@ -6,3 +6,4 @@ bots/local_settings.py
 .idea
 static
 media
+db.sqlite3

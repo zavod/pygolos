@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.core.management.base import BaseCommand
-from apps.golos.backend import GolosBackend
+
+from apps.providers.golos import GolosBackend
 
 
 class Command(BaseCommand):

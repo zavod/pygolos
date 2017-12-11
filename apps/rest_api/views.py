@@ -1,10 +1,13 @@
-from rest_framework import routers, serializers, viewsets, generics
-from apps.rest_api.serializers import *
-from rest_framework import filters
-from apps.reviews.models import Review
-from django.views.decorators.csrf import csrf_exempt
-from apps.golos.backend import GolosBackend
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework import filters
+from rest_framework import generics
+
+from apps.providers.golos.backend import GolosBackend
+from apps.providers.base.backend import BaseBlockchain
+from apps.rest_api.serializers import *
+from apps.reviews.models import Review
+
 
 class ReviewList(generics.ListAPIView):
     serializer_class = ReviewSerializer
@@ -42,7 +45,7 @@ class ReviewList(generics.ListAPIView):
 @csrf_exempt # TODO do it with csrf
 def commit_posts(request):
     if request.method == 'POST':
-        backend = GolosBackend()
+        backend = BaseBlockchain()
         result = backend.fill_post_by_source(request)
         return JsonResponse(result)
 
