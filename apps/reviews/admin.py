@@ -9,7 +9,7 @@ admin.site.register(Asset)
 @admin.register(Review)
 class ReviewAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('title',),}
-    list_display = ['title', 'provider', 'source_id', 'slug', 'publish', 'complete', 'votes', 'reward', 'asset', 'btc', 'rub', 'get_out_link', ]
+    list_display = ['title', 'provider', 'author', 'source_id', 'slug', 'publish', 'complete', 'votes', 'reward', 'asset', 'btc', 'rub', 'get_out_link', ]
     formfield_overrides = {
         TextField: {'widget': AdminTinyMCE(attrs={'cols': 80, 'rows': 40}, )},
     }

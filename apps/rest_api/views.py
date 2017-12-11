@@ -45,7 +45,10 @@ class ReviewList(generics.ListAPIView):
 @csrf_exempt # TODO do it with csrf
 def commit_posts(request):
     if request.method == 'POST':
+        author = request.POST.get('author')
         backend = BaseBlockchain()
+        backend.author = author
+
         result = backend.fill_post_by_source(request)
         return JsonResponse(result)
 
