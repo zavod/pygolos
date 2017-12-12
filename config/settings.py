@@ -145,6 +145,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 UPLOAD_ROOT = os.path.join(BASE_DIR, 'media')
 
 GOLOS_NODES = ['https://ws.golos.io', ]
-STEEM_NODES = [ ] # TODO fill it
+STEEM_NODES = None
 
 from config.local_settings import *

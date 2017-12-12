@@ -12,16 +12,14 @@ class BaseBlockchain(object):
     """
     nodes = None
     PRIVATE_POSTING_KEY = None
-    ACTIVE_KEY = None
+    PRIVATE_ACTIVE_KEY = None
     author = None
 
     def init(self, **kwargs):
-        self.steem = stm.Steem(nodes=self.nodes, keys=[self.PRIVATE_POSTING_KEY, self.ACTIVE_KEY])
+        self.steem = stm.Steem(nodes=self.nodes, keys=[self.PRIVATE_POSTING_KEY, self.PRIVATE_ACTIVE_KEY])
 
     def publish_post(self, post):
-        self.steem.post(title=post.title, permlink=post.slug, body=post.text, author=self.author,
-                                     tags=post.tags, self_vote=True)
-        # tags = ['kubish', 'кэшбэк', 'cashbacks', 'покупки', 'Aliexpress']
+        self.steem.post(title=post.title, permlink=post.slug, body=post.text, author=self.author, tags=post.tags, self_vote=False)
 
         post.publish = True
         post.save()
@@ -32,7 +30,8 @@ class BaseBlockchain(object):
             self.get_post(post)
 
     def get_post(self, post):
-        asset_source = None
+        if not post.author or post.author != self.author:
+            return
         kwargs = {'author': post.author, 'permlink': post.slug}
         blockchain_post = Post(post=kwargs, steemd_instance=self.steem)
         votes = blockchain_post.get('net_votes')  # len(post.get('active_votes'))
