@@ -147,4 +147,62 @@ UPLOAD_ROOT = os.path.join(BASE_DIR, 'media')
 GOLOS_NODES = ['https://ws.golos.io', ]
 STEEM_NODES = None
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '%(asctime)s %(name)s %(levelname)s %(message)s',
+            'datefmt': '%Y-%m-%d %H:%M:%S'
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+    },
+    'filters': {
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'INFO',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+        'blockchain': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR + '/../logs/blockchain.log',
+            'formatter': 'verbose'
+        },
+
+        'django_file': {
+            'level': 'WARNING',
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR + '/../logs/django.log',
+            'formatter': 'verbose'
+        },
+
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'propagate': True,
+        },
+        'django.request': {
+            'handlers': ['django_file', 'console'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+
+        'blockchain': {
+            'handlers': ['blockchain', 'console'],
+            'level': 'INFO',
+        },
+
+    }
+}
+
 from config.local_settings import *

@@ -39,7 +39,8 @@ class ReviewList(generics.ListAPIView):
             result_string = 'got count %s' % queryset.count()
             print(result_string)
             return queryset
-        except:
+        except Exception as e:
+            print(e)
             return []
 
 @csrf_exempt # TODO do it with csrf
