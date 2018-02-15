@@ -33,7 +33,11 @@ class BaseBlockchain(object):
         if not post.author or post.author != self.author:
             return
         kwargs = {'author': post.author, 'permlink': post.slug}
-        blockchain_post = Post(post=kwargs, steemd_instance=self.steem)
+
+        try:
+            blockchain_post = Post(post=kwargs, steemd_instance=self.steem)
+        except:
+            return
         votes = blockchain_post.get('net_votes')  # len(post.get('active_votes'))
         post.votes = votes
 
