@@ -62,18 +62,22 @@ class BaseBlockchain(object):
 
         if post.provider == 'golos':
             # calc BTC
-            gbg_course = float(self.get_local_course().get('base').split(' ')[0])
-            gbg_golos = post.reward / gbg_course
+            local_course = self.get_local_course()
+            if local_course:
+                base_course = local_course.get('base')
+                if base_course:
+                    gbg_course = float(base_course.split(' ')[0])
+                    gbg_golos = post.reward / gbg_course
+
+                    api = Bittrex(settings.BITTREX_KEY, settings.BITTREX_SECRET)
+                    btc_cost = api.get_ticker('BTC-GOLOS').get('result').get('Ask')
+                    post.btc = btc_cost * gbg_golos
+
+                    # calc RUB reward
+                    rub_course = Coinapult().get_current_price(currency='RUB')
+                    post.rub = post.btc * float(rub_course)
         else:
             return # TODO set it for steem
-
-        api = Bittrex(settings.BITTREX_KEY, settings.BITTREX_SECRET)
-        btc_cost = api.get_ticker('BTC-GOLOS').get('result').get('Ask')
-        post.btc = btc_cost * gbg_golos
-
-        # calc RUB reward
-        rub_course = Coinapult().get_current_price(currency='RUB')
-        post.rub = post.btc * float(rub_course)
 
         post.save()
 
