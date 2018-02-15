@@ -19,29 +19,25 @@ class ReviewList(generics.ListAPIView):
         token = self.request.GET.get('token')
         slug = self.request.GET.get('slug')
 
-        try:
+        print(token)
+        print(settings.BLOCKCHAIN_TOKEN)
 
-            print(token)
-            print(settings.BLOCKCHAIN_TOKEN)
-
-            if token != settings.BLOCKCHAIN_TOKEN:
-                print('exit now')
-                return []
-
-            # get info from blockchain
-            print('start get data from blockchain')
-            backend = GolosBackend()
-            backend.init()
-            backend.get_posts()
-            print('finish get data from blockchain')
-
-            queryset = Review.objects.filter(publish=True)
-            result_string = 'got count %s' % queryset.count()
-            print(result_string)
-            return queryset
-        except Exception as e:
-            print(e)
+        if token != settings.BLOCKCHAIN_TOKEN:
+            print('exit now')
             return []
+
+        # get info from blockchain
+        print('start get data from blockchain')
+        backend = GolosBackend()
+        backend.init()
+        backend.get_posts()
+        print('finish get data from blockchain')
+
+        queryset = Review.objects.filter(publish=True)
+        result_string = 'got count %s' % queryset.count()
+        print(result_string)
+        return queryset
+
 
 @csrf_exempt # TODO do it with csrf
 def commit_posts(request):
